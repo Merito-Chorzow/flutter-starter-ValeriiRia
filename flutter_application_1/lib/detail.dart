@@ -1,18 +1,29 @@
 import 'package:flutter/material.dart';
+import 'wpis.dart'; 
 
 class DetailScreen extends StatelessWidget {
+  
+  final Wpis wpis; 
 
-  const DetailScreen({Key? key}) : super(key: key);
+  const DetailScreen({Key? key, required this.wpis}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Detale'),
+        title: Text(wpis.title),
       ),
-        body: Center(
-      child: Text('...'),
+      body: Padding(
+        padding: const EdgeInsets.all(16.0),
+        child: Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text('ID: ${wpis.id}'),
+            SizedBox(height: 10),
+            Text(wpis.body),
+          ],
         ),
+      ),
     );
   }
 }
