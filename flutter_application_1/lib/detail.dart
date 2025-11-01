@@ -20,7 +20,20 @@ class DetailScreen extends StatelessWidget {
           children: [
             Text('ID: ${wpis.id}'),
             SizedBox(height: 10),
-            Text(wpis.body),
+
+            if (wpis.location != null && wpis.location!.isNotEmpty)
+              Padding(
+                padding: const EdgeInsets.only(bottom: 12.0),
+                child: Text(
+                  'Lokalizacja: ${wpis.location!}',
+                  style: TextStyle(
+                    fontWeight: FontWeight.bold, 
+                    color: Colors.blueAccent
+                  ),
+                ),
+              ),
+
+            Text(wpis.body), 
           ],
         ),
       ),

@@ -18,9 +18,9 @@ class _ListScreenState extends State<ListScreen> {
   @override
   void initState() {
     super.initState();
-    _zaladujDane();
+    _zaladujDane(); 
   }
-
+  
   Future<void> _zaladujDane() async {
     try {
       final pobraneWpisy = await pobierzWpisy();
@@ -39,17 +39,29 @@ class _ListScreenState extends State<ListScreen> {
   Future<List<Wpis>> pobierzWpisy() async {
     final response = await http
         .get(Uri.parse('https://jsonplaceholder.typicode.com/posts'));
-
     if (response.statusCode == 200) {
       List jsonResponse = json.decode(response.body);
-      return jsonResponse.map((wpis) => Wpis.fromJson(wpis)).toList();
+      return jsonResponse.map((wpis) => Wpis.fromJson(wpis)).take(8).toList();
     } else {
       throw Exception('Nie udało się załadować');
     }
   }
 
+  void _nawigujDoDodajWpis(BuildContext context) async {
+    final nowyWpis = await Navigator.push(
+      context,
+      MaterialPageRoute(builder: (context) => AddScreen()),
+    );
+
+    if (nowyWpis != null && nowyWpis is Wpis) {
+      setState(() {
+        wpisy.insert(0, nowyWpis);
+      });
+    }
+  }
+
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContextBcontext) {
     return Scaffold(
       appBar: AppBar(
         title: Text('Mój Dziennik'),
@@ -60,10 +72,7 @@ class _ListScreenState extends State<ListScreen> {
       floatingActionButton: FloatingActionButton(
         child: Icon(Icons.add),
         onPressed: () {
-          Navigator.push(
-            context,
-            MaterialPageRoute(builder: (context) => AddScreen()),
-          );
+          _nawigujDoDodajWpis(context);
         },
       ),
     );
@@ -79,14 +88,18 @@ class _ListScreenState extends State<ListScreen> {
     if (wpisy.isEmpty) {
       return Text('Brak wpisów.');
     }
-    
     return ListView.builder(
       itemCount: wpisy.length,
       itemBuilder: (context, index) {
         final wpis = wpisy[index];
         return ListTile(
+          leading: (wpis.location != null) ? Icon(Icons.location_pin) : Icon(Icons.notes),
           title: Text(wpis.title),
-          subtitle: Text(wpis.body, maxLines: 1),
+          subtitle: Text(
+            wpis.location ?? wpis.body, 
+            maxLines: 1,
+            overflow: TextOverflow.ellipsis,
+          ),
           onTap: () {
             Navigator.push(
               context,
